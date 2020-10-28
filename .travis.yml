@@ -18,7 +18,7 @@ script:
   - export AWS_KVS_LOG_LEVEL=3
   - make
   - ulimit -c unlimited -S
-  - timeout --signal=SIGABRT 60m ./tst/webrtc_client_test
+  - timeout --signal=SIGABRT 60m ./tst/webrtc_client_test --gtest_filter="IceFunctionalityTest.IceAgentCandidateGatheringTest"
 
 after_failure:
   - for i in $(find ./ -maxdepth 1 -name 'core*' -print); do gdb $(pwd)/tst/webrtc_client_test core* -ex "thread apply all bt" -ex "set pagination 0" -batch; done;
@@ -191,7 +191,7 @@ matrix:
         - sudo apt-get -q update
         - sudo apt-get -y install gcc-4.4
         - sudo apt-get -y install gdb
-      before_script: mkdir build && cd build && cmake .. -DBUILD_TEST=TRUE -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON
+      before_script: mkdir build && cd build && cmake .. -DBUILD_TEST=TRUE -DUSE_OPENSSL=OFF -DUSE_MBEDTLS=ON -DCMAKE_BUILD_TYPE=Debug
 
     - name: "Windows MSVC"
       os: windows
