@@ -72,8 +72,8 @@ extern "C" {
 // #define MBEDTLS_MPI_MAX_SIZE 48 // 384 bits is 48 bytes
 
 /* Save RAM at the expense of speed, see ecp.h */
-#define MBEDTLS_ECP_WINDOW_SIZE       2
-#define MBEDTLS_ECP_FIXED_POINT_OPTIM 0
+// #define MBEDTLS_ECP_WINDOW_SIZE       2
+// #define MBEDTLS_ECP_FIXED_POINT_OPTIM 0
 
 /* Significant speed benefit at the expense of some ROM */
 #define MBEDTLS_ECP_NIST_OPTIM
@@ -83,7 +83,7 @@ extern "C" {
  * is the "mbedtls_platform_entropy_poll" source, but you may want to add other ones.
  * Minimum is 2 for the entropy test suite.
  */
-#define MBEDTLS_ENTROPY_MAX_SOURCES 2
+// #define MBEDTLS_ENTROPY_MAX_SOURCES 2
 
 /* Save ROM and a few bytes of RAM by specifying our own ciphersuite list
  *
