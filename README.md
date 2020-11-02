@@ -94,7 +94,8 @@ You can pass the following options to `cmake ..`.
 * `-DADDRESS_SANITIZER` -- Build with AddressSanitizer
 * `-DMEMORY_SANITIZER` --  Build with MemorySanitizer
 * `-DTHREAD_SANITIZER` -- Build with ThreadSanitizer
-* `-DUNDEFINED_BEHAVIOR_SANITIZER` Build with UndefinedBehaviorSanitizer`
+* `-DUNDEFINED_BEHAVIOR_SANITIZER` -- Build with UndefinedBehaviorSanitizer
+* `-DLINK_PROFILER` -- Link with gperftools (available profiler options are listed [here](https://github.com/gperftools/gperftools))
 
 ### Build
 To build the library and the provided samples run make in the build directory you executed CMake.
