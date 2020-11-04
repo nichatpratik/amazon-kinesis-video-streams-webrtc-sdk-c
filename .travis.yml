@@ -152,7 +152,7 @@ matrix:
         - alpine() { docker exec -it alpine "$@"; }
       install:
         - alpine apk update
-        - alpine apk add alpine-sdk cmake clang linux-headers perl
+        - alpine apk add alpine-sdk cmake clang linux-headers perl bash
       script:
         - alpine cmake .. -DBUILD_STATIC=TRUE -DBUILD_OPENSSL=TRUE -DBUILD_TEST=TRUE
         - alpine make

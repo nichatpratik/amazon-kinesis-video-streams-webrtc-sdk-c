@@ -226,15 +226,16 @@ add_library(kvsWebrtcSignalingClient ${LINKAGE} ${WEBRTC_SIGNALING_CLIENT_SOURCE
 
 target_link_libraries(
   kvsWebrtcSignalingClient
+  PUBLIC
+          ${LIBWEBSOCKETS_LIBRARIES}
+          kvsCommonLws
   PRIVATE kvspicUtils
           kvspicState
           ${CMAKE_THREAD_LIBS_INIT}
-          ${LIBWEBSOCKETS_LIBRARIES}
           ${EXTRA_DEPS}
           ${OPENSSL_SSL_LIBRARY}
           ${OPENSSL_CRYPTO_LIBRARY}
-          ${MBEDTLS_LIBRARIES}
-  PUBLIC kvsCommonLws)
+          ${MBEDTLS_LIBRARIES})
 
 if (WIN32)
   target_link_libraries(kvsWebrtcClient PRIVATE "Ws2_32" "iphlpapi")
