@@ -244,7 +244,7 @@ This SDK has clang format checks enforced in builds. In order to avoid re-iterat
 complies, use the `check-clang.sh` to check for compliance and `clang-format.sh` to ensure compliance.
 
 ## Documentation
-All Public APIs are documented in our [Include.h](https://github.com/awslabs/amazon-kinesis-video-streams-webrtc-sdk-c/blob/master/src/include/com/amazonaws/kinesis/video/webrtcclient/Include.h), we also generate a [Doxygen](https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-c/) each commit for easier navigation.
+All Public APIs are documented in our [Include.h](https://github.com/awslabs/amazon-kinesis-video-streams-webrtc-sdk-c/blob/master/src/include/webrtc/com/amazonaws/kinesis/video/webrtcclient/Include.h), we also generate a [Doxygen](https://awslabs.github.io/amazon-kinesis-video-streams-webrtc-sdk-c/) each commit for easier navigation.
 
 Refer to [related](#related) for more about WebRTC and KVS.
 
