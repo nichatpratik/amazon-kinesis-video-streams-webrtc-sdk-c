@@ -186,19 +186,17 @@ STATUS connectionListenerRemoveAllConnection(PConnectionListener pConnectionList
 
     ATOMIC_STORE_BOOL(&pConnectionListener->connectionListChanged, TRUE);
 
-
     /* make sure connectionListenerRemoveAllConnection return after connectionListenerReceiveDataRoutine has picked up
-     * the change. 
+     * the change. */
     while (ATOMIC_LOAD_BOOL(&pConnectionListener->listenerRoutineStarted) && !ATOMIC_LOAD_BOOL(&pConnectionListener->terminate) &&
            ATOMIC_LOAD_BOOL(&pConnectionListener->connectionListChanged) && STATUS_SUCCEEDED(cvarWaitStatus)) {
         cvarWaitStatus =
             CVAR_WAIT(pConnectionListener->removeConnectionComplete, pConnectionListener->lock, CONNECTION_AWAIT_CONNECTION_REMOVAL_TIMEOUT);
-        /* CVAR_WAIT should never time out 
+        /* CVAR_WAIT should never time out */
         if (STATUS_FAILED(cvarWaitStatus)) {
             DLOGW("CVAR_WAIT() failed with 0x%08x", cvarWaitStatus);
         }
     }
-    */
 
 CleanUp:
 
