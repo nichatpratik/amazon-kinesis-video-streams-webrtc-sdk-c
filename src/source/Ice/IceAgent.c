@@ -644,6 +644,68 @@ CleanUp:
 STATUS iceAgentShutdown(PIceAgent pIceAgent)
 {
     STATUS retStatus = STATUS_SUCCESS;
+    BOOL locked = FALSE;
+    PDoubleListNode pCurNode = NULL;
+    PIceCandidate pLocalCandidate = NULL;
+
+    CHK(pIceAgent != NULL, STATUS_NULL_ARG);
+
+    MUTEX_LOCK(pIceAgent->lock);
+    locked = TRUE;
+
+    CHK_STATUS(doubleListGetHeadNode(pIceAgent->localCandidates, &pCurNode));
+    while (pCurNode != NULL) {
+        pLocalCandidate = (PIceCandidate) pCurNode->data;
+        pCurNode = pCurNode->pNext;
+
+        if (pLocalCandidate->iceCandidateType != ICE_CANDIDATE_TYPE_RELAYED) {
+            CHK_STATUS(connectionListenerRemoveConnection(pIceAgent->pConnectionListener, pLocalCandidate->pSocketConnection));
+        }
+    }
+
+    MUTEX_UNLOCK(pIceAgent->lock);
+    locked = FALSE;
+
+    if (pIceAgent->iceAgentStateTimerTask != UINT32_MAX) {
+        CHK_STATUS(timerQueueCancelTimer(pIceAgent->timerQueueHandle, pIceAgent->iceAgentStateTimerTask, (UINT64) pIceAgent));
+        pIceAgent->iceAgentStateTimerTask = UINT32_MAX;
+    }
+
+    if (pIceAgent->keepAliveTimerTask != UINT32_MAX) {
+        CHK_STATUS(timerQueueCancelTimer(pIceAgent->timerQueueHandle, pIceAgent->keepAliveTimerTask, (UINT64) pIceAgent));
+        pIceAgent->keepAliveTimerTask = UINT32_MAX;
+    }
+
+    // free turn allocation
+    if (pIceAgent->turnConnectionTracker.pTurnConnection != NULL) {
+        if (pIceAgent->turnConnectionTracker.freeTurnConnectionTimerId != UINT32_MAX) {
+            CHK_STATUS(timerQueueCancelTimer(pIceAgent->timerQueueHandle, pIceAgent->turnConnectionTracker.freeTurnConnectionTimerId,
+                                             (UINT64) &pIceAgent->turnConnectionTracker));
+            pIceAgent->turnConnectionTracker.freeTurnConnectionTimerId = UINT32_MAX;
+        }
+        CHK_STATUS(turnConnectionShutdown(pIceAgent->turnConnectionTracker.pTurnConnection, KVS_ICE_TURN_CONNECTION_SHUTDOWN_TIMEOUT));
+        CHK_LOG_ERR(freeTurnConnection(&pIceAgent->turnConnectionTracker.pTurnConnection));
+    }
+
+    // remove all connections first so no more incoming packets
+    if (pIceAgent->pConnectionListener != NULL) {
+        CHK_STATUS(connectionListenerRemoveAllConnection(pIceAgent->pConnectionListener));
+    }
+
+CleanUp:
+
+    CHK_LOG_ERR(retStatus);
+
+    if (locked) {
+        MUTEX_UNLOCK(pIceAgent->lock);
+    }
+
+    return retStatus;
+}
+
+/*STATUS iceAgentShutdown(PIceAgent pIceAgent)
+{
+    STATUS retStatus = STATUS_SUCCESS;
     BOOL locked = FALSE, turnShutdownCompleted = FALSE;
     PDoubleListNode pCurNode = NULL;
     PIceCandidate pLocalCandidate = NULL;
@@ -680,7 +742,7 @@ STATUS iceAgentShutdown(PIceAgent pIceAgent)
         pCurNode = pCurNode->pNext;
 
         if (pLocalCandidate->iceCandidateType != ICE_CANDIDATE_TYPE_RELAYED) {
-            /* close socket so ice doesnt receive any more data */
+            /* close socket so ice doesnt receive any more data 
             CHK_STATUS(socketConnectionClosed(pLocalCandidate->pSocketConnection));
         } else {
             CHK_STATUS(turnConnectionShutdown(pLocalCandidate->pTurnConnection, 0));
@@ -707,7 +769,7 @@ STATUS iceAgentShutdown(PIceAgent pIceAgent)
         DLOGW("TurnConnection shutdown did not complete within %u seconds", KVS_ICE_TURN_CONNECTION_SHUTDOWN_TIMEOUT / HUNDREDS_OF_NANOS_IN_A_SECOND);
     }
 
-    /* remove connections last because still need to send data to deallocate turn */
+    /* remove connections last because still need to send data to deallocate turn 
     if (pIceAgent->pConnectionListener != NULL) {
         CHK_STATUS(connectionListenerRemoveAllConnection(pIceAgent->pConnectionListener));
     }
@@ -722,6 +784,7 @@ CleanUp:
 
     return retStatus;
 }
+*/
 
 STATUS iceAgentRestart(PIceAgent pIceAgent, PCHAR localIceUfrag, PCHAR localIcePwd)
 {
