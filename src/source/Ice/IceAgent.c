@@ -691,11 +691,6 @@ STATUS iceAgentShutdown(PIceAgent pIceAgent)
     MUTEX_UNLOCK(pIceAgent->lock);
     locked = FALSE;
 
-        /* remove connections last because still need to send data to deallocate turn */
-    if (pIceAgent->pConnectionListener != NULL) {
-        CHK_STATUS(connectionListenerRemoveAllConnection(pIceAgent->pConnectionListener));
-    }
-
     turnShutdownTimeout = GETTIME() + KVS_ICE_TURN_CONNECTION_SHUTDOWN_TIMEOUT;
     while (!turnShutdownCompleted && GETTIME() < turnShutdownTimeout) {
         turnShutdownCompleted = TRUE;
@@ -710,6 +705,11 @@ STATUS iceAgentShutdown(PIceAgent pIceAgent)
 
     if (!turnShutdownCompleted) {
         DLOGW("TurnConnection shutdown did not complete within %u seconds", KVS_ICE_TURN_CONNECTION_SHUTDOWN_TIMEOUT / HUNDREDS_OF_NANOS_IN_A_SECOND);
+    }
+
+    /* remove connections last because still need to send data to deallocate turn */
+    if (pIceAgent->pConnectionListener != NULL) {
+        CHK_STATUS(connectionListenerRemoveAllConnection(pIceAgent->pConnectionListener));
     }
 
 CleanUp:
