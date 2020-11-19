@@ -158,7 +158,6 @@ STATUS setPayloadTypesFromOffer(PHashTable codecTable, PHashTable rtxTable, PSes
     UINT64 parsedPayloadType, hashmapPayloadType, fmtpVal, aptVal;
     UINT16 aptFmtpVals[MAX_SDP_FMTP_VALUES];
     UINT16 aptFmtVal;
-    UINT64 parsedPayloadType, rtxPayloadType, hashmapPayloadType;
     BOOL supportCodec;
     UINT32 tokenLen, i, aptFmtpValCount;
 
